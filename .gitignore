@@ -1,6 +1,7 @@
-/.vs/
-/ChangeBackground/Debug/
-/ChangeBackground/x64/
+.vs/
+ChangeBackground/Debug/
+ChangeBackground/x64/
+x64/Debug
 
 # Prerequisites
 *.d
