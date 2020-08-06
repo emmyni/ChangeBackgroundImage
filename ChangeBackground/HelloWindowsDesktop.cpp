@@ -6,8 +6,6 @@
 #include <string.h>
 #include <tchar.h>
 
-#include <iostream>
-
 // Global variables
 
 // The main window class name.
@@ -20,24 +18,6 @@ HINSTANCE hInst;
 
 // Forward declarations of functions included in this code module:
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-
-void SetWallpaper()
-{
-    const wchar_t* filepath = L"C:\\Users\\Emmy Ni\\Downloads\\marguerite-729510_1920.jpg";
-
-    int result;
-    result = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (PVOID)filepath, SPIF_UPDATEINIFILE);
-
-    if (result)
-    {
-        std::cout << "Wallpaper set";
-    }
-    else
-    {
-        std::cout << "Wallpaper not set";
-        std::cout << "SPI returned" << result;
-    }
-}
 
 int CALLBACK WinMain(
     _In_ HINSTANCE hInstance,
@@ -132,8 +112,6 @@ int CALLBACK WinMain(
 //  WM_DESTROY  - post a quit message and return
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    SetWallpaper();
-
     PAINTSTRUCT ps;
     HDC hdc;
     TCHAR greeting[] = _T("Hello, Windows desktop!");

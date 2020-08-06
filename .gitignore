@@ -1,7 +1,10 @@
 .vs/
 ChangeBackground/Debug/
+ChangeBackground/Release/
 ChangeBackground/x64/
-x64/Debug
+x64
+Debug
+Release
 
 # Prerequisites
 *.d
