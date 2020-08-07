@@ -1,10 +1,16 @@
 // HelloWindowsDesktop.cpp
 // compile with: /D_UNICODE /DUNICODE /DWIN32 /D_WINDOWS /c
 
+#define CURL_STATICLIB 
 #include <windows.h>
 #include <stdlib.h>
 #include <string.h>
 #include <tchar.h>
+
+#include <iostream>
+#include <stdio.h>
+
+#include "curl.h"
 
 // Global variables
 
@@ -18,6 +24,75 @@ HINSTANCE hInst;
 
 // Forward declarations of functions included in this code module:
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+
+size_t callbackfunction(void* ptr, size_t size, size_t nmemb, void* userdata)
+{
+    FILE* stream = (FILE*)userdata;
+    if (!stream)
+    {
+        printf("!!! No stream\n");
+        return 0;
+    }
+
+    size_t written = fwrite((FILE*)ptr, size, nmemb, stream);
+    return written;
+}
+
+bool download_jpeg(char* url)
+{
+    FILE* fp = fopen("C:\\Users\\Emmy Ni\\Downloads\\wallpaper.jpg", "wb");
+    if (!fp)
+    {
+        printf("!!! Failed to create file on the disk\n");
+        return false;
+    }
+
+    CURL* curlCtx = curl_easy_init();
+    curl_easy_setopt(curlCtx, CURLOPT_URL, url);
+    curl_easy_setopt(curlCtx, CURLOPT_WRITEDATA, fp);
+    curl_easy_setopt(curlCtx, CURLOPT_WRITEFUNCTION, callbackfunction);
+    curl_easy_setopt(curlCtx, CURLOPT_FOLLOWLOCATION, 1);
+
+    CURLcode rc = curl_easy_perform(curlCtx);
+    if (rc)
+    {
+        printf("!!! Failed to download: %s\n", url);
+        return false;
+    }
+
+    long res_code = 0;
+    curl_easy_getinfo(curlCtx, CURLINFO_RESPONSE_CODE, &res_code);
+    if (!((res_code == 200 || res_code == 201) && rc != CURLE_ABORTED_BY_CALLBACK))
+    {
+        printf("!!! Response code: %d\n", res_code);
+        return false;
+    }
+
+    curl_easy_cleanup(curlCtx);
+
+    fclose(fp);
+
+    return true;
+}
+
+void SetWallpaper()
+{
+    download_jpeg((char*)"https://source.unsplash.com/1920x1080/");
+	const wchar_t* filepath = L"C:\\Users\\Emmy Ni\\Downloads\\wallpaper.jpg";
+
+	int result;
+	result = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (PVOID)filepath, SPIF_UPDATEINIFILE);
+
+	if (result)
+	{
+		std::cout << "Wallpaper set";
+	}
+	else
+	{
+		std::cout << "Wallpaper not set";
+		std::cout << "SPI returned" << result;
+	}
+}
 
 int CALLBACK WinMain(
     _In_ HINSTANCE hInstance,
@@ -112,6 +187,7 @@ int CALLBACK WinMain(
 //  WM_DESTROY  - post a quit message and return
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    SetWallpaper();
     PAINTSTRUCT ps;
     HDC hdc;
     TCHAR greeting[] = _T("Hello, Windows desktop!");
