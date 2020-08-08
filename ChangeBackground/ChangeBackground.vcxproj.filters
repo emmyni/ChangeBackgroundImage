@@ -18,8 +18,5 @@
     <ClCompile Include="HelloWindowsDesktop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SetWallpaper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

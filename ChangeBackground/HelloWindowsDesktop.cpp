@@ -1,6 +1,3 @@
-// HelloWindowsDesktop.cpp
-// compile with: /D_UNICODE /DUNICODE /DWIN32 /D_WINDOWS /c
-
 #define CURL_STATICLIB 
 #include <windows.h>
 #include <stdlib.h>
@@ -40,7 +37,7 @@ size_t callbackfunction(void* ptr, size_t size, size_t nmemb, void* userdata)
 
 bool download_jpeg(char* url)
 {
-    FILE* fp = fopen("C:\\Users\\Emmy Ni\\Downloads\\wallpaper.jpg", "wb");
+    FILE* fp = fopen("wallpaper.jpg", "wb");
     if (!fp)
     {
         printf("!!! Failed to create file on the disk\n");
@@ -78,7 +75,7 @@ bool download_jpeg(char* url)
 void SetWallpaper()
 {
     download_jpeg((char*)"https://source.unsplash.com/1920x1080/");
-	const wchar_t* filepath = L"C:\\Users\\Emmy Ni\\Downloads\\wallpaper.jpg";
+	const wchar_t* filepath = L"wallpaper.jpg";
 
 	int result;
 	result = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (PVOID)filepath, SPIF_UPDATEINIFILE);
@@ -101,6 +98,8 @@ int CALLBACK WinMain(
     _In_ int       nCmdShow
 )
 {
+    SetWallpaper();
+
     WNDCLASSEX wcex;
 
     wcex.cbSize = sizeof(WNDCLASSEX);
@@ -120,7 +119,7 @@ int CALLBACK WinMain(
     {
         MessageBox(NULL,
             _T("Call to RegisterClassEx failed!"),
-            _T("Windows Desktop Guided Tour"),
+            _T("Change the Desktop Background"),
             NULL);
 
         return 1;
@@ -155,7 +154,7 @@ int CALLBACK WinMain(
     {
         MessageBox(NULL,
             _T("Call to CreateWindow failed!"),
-            _T("Windows Desktop Guided Tour"),
+            _T("Change the Desktop Background"),
             NULL);
 
         return 1;
@@ -187,19 +186,14 @@ int CALLBACK WinMain(
 //  WM_DESTROY  - post a quit message and return
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    SetWallpaper();
     PAINTSTRUCT ps;
     HDC hdc;
-    TCHAR greeting[] = _T("Hello, Windows desktop!");
+    TCHAR greeting[] = _T("Set Desktop Image");
 
     switch (message)
     {
     case WM_PAINT:
         hdc = BeginPaint(hWnd, &ps);
-
-        // Here your application is laid out.
-        // For this introduction, we just print out "Hello, Windows desktop!"
-        // in the top left corner.
         TextOut(hdc,
             5, 5,
             greeting, _tcslen(greeting));
