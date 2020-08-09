@@ -4,6 +4,7 @@
 #include <string.h>
 #include <tchar.h>
 
+#include <filesystem>
 #include <iostream>
 #include <stdio.h>
 
@@ -15,7 +16,7 @@
 static TCHAR szWindowClass[] = _T("DesktopApp");
 
 // The string that appears in the application's title bar.
-static TCHAR szTitle[] = _T("Windows Desktop Guided Tour Application");
+static TCHAR szTitle[] = _T("Change Desktop Background");
 
 HINSTANCE hInst;
 
@@ -35,9 +36,9 @@ size_t callbackfunction(void* ptr, size_t size, size_t nmemb, void* userdata)
     return written;
 }
 
-bool download_jpeg(char* url)
+bool download_jpeg(char* url, std::string wallpaper)
 {
-    FILE* fp = fopen("wallpaper.jpg", "wb");
+    FILE* fp = fopen(wallpaper.c_str(), "wb");
     if (!fp)
     {
         printf("!!! Failed to create file on the disk\n");
@@ -74,11 +75,18 @@ bool download_jpeg(char* url)
 
 void SetWallpaper()
 {
-    download_jpeg((char*)"https://source.unsplash.com/1920x1080/");
-	const wchar_t* filepath = L"wallpaper.jpg";
+    WCHAR path[MAX_PATH];
+    GetModuleFileName(NULL, path, MAX_PATH);
+    std::wstring exePath(path);
+    std::string folder(exePath.begin(), exePath.end());
+    std::string wallpaper = folder.substr(0, folder.find_last_of("\\/")) + "\\wallpaper.jpg";
+    std::wstring wsTmp(wallpaper.begin(), wallpaper.end());
+    const wchar_t* wallpaperPath = wsTmp.c_str();
+
+    download_jpeg((char*)"https://source.unsplash.com/1920x1080/", wallpaper);
 
 	int result;
-	result = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (PVOID)filepath, SPIF_UPDATEINIFILE);
+	result = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, (PVOID)wallpaperPath, SPIF_UPDATEINIFILE);
 
 	if (result)
 	{
